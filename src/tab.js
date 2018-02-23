@@ -24,6 +24,7 @@ SideTab.prototype = {
     }
     this.updatePinned(tabInfo.pinned);
     this.updateDiscarded(tabInfo.discarded);
+    this.updateHidden(tabInfo.hidden);
     if (tabInfo.cookieStoreId) {
       // This work is done in the background on purpose: making create() async
       // creates all sorts of bugs, because it is called in observers (which
@@ -179,6 +180,9 @@ SideTab.prototype = {
   },
   updateDiscarded(discarded) {
     toggleClass(this.view, "discarded", discarded);
+  },
+  updateHidden(hidden) {
+    toggleClass(this.view, "hidden", hidden);
   },
   updateContext(context) {
     if (!context) {

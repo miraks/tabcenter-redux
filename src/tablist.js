@@ -145,6 +145,9 @@ SideTabList.prototype = {
     if (changeInfo.hasOwnProperty("discarded")) {
       this.setDiscarded(tab);
     }
+    if (changeInfo.hasOwnProperty("hidden")) {
+      this.setHidden(tab);
+    }
   },
   onMouseDown(e) {
     // Don't put preventDefault here or drag-and-drop won't work
@@ -253,6 +256,24 @@ SideTabList.prototype = {
         }
       });
     }
+    items.push({
+      label: "separator"
+    });
+    items.push({
+      label: "Hide tab",
+      onCommandFn: () => {
+        browser.tabs.hide(tabId);
+        browser.tabs.discard(tabId);
+      }
+    }),
+    items.push({
+      label: "Show all tabs",
+      onCommandFn: async () => {
+        const tabs = await browser.tabs.query({hidden: true});
+        const tabIds = tabs.map((tab) => tab.id);
+        browser.tabs.show(tabIds);
+      }
+    }),
     items.push({
       label: "separator"
     });
@@ -683,6 +704,13 @@ SideTabList.prototype = {
       return;
     }
     sidetab.updateDiscarded(tab.discarded);
+  },
+  setHidden(tab) {
+    let sidetab = this.getTab(tab);
+    if (!sidetab) {
+      return;
+    }
+    sidetab.updateHidden(tab.hidden);
   },
   setContext(tab, context) {
     let sidetab = this.getTab(tab);
